@@ -41,7 +41,7 @@ public class HelloControllerTest {
 
     @Test
     public void HelloWorldControllerTest () throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/hello").accept(MediaType.TEXT_PLAIN))
+        mockMvc.perform(MockMvcRequestBuilders.get("/home/hello").accept(MediaType.TEXT_PLAIN))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Hello World!"));
