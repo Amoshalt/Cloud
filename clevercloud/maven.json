@@ -1,7 +1,7 @@
 {
   "build": {
     "type": "maven",
-    "goal": "package"
+    "goal": "clean verify org.codehaus.cargo:cargo-maven2-plugin:run"
   },
   "deploy": {
     "goal": "package"
