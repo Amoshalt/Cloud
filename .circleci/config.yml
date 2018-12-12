@@ -7,8 +7,7 @@ workflows:
     "Hello Workflow":
         jobs:
           - hello/hello-build
-          
-version: 2
+
 jobs:
   build:
     docker: # use the docker executor type; machine and macos executors are also supported
