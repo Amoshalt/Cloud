@@ -5,10 +5,10 @@ import com.cloud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.json.JsonObject;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/")
@@ -25,7 +25,9 @@ public class UserController {
     @GetMapping("/user")
     public List<User> getUsers() {
         System.out.println("coucou");
-        return this.userRepository.findAll();
+        List<User> users = this.userRepository.findAll();
+        System.out.println(users);
+        return users;
     }
 
     /** replace users by users
@@ -52,7 +54,7 @@ public class UserController {
      * @return User
      */
     @GetMapping("/user/{id}")
-    public Optional<User> getUser(@PathVariable(value = "id") Long id) {
+    public Optional<User> getUser(@PathVariable(value = "id") UUID id) {
         return this.userRepository.findById(id);
     }
 
@@ -62,7 +64,7 @@ public class UserController {
      */
     @PostMapping("/user")
     public @Valid User postUser(@Valid @RequestBody User user) {
-        return this.userRepository.save(user);
+        return this.userRepository.insert(user);
     }
 
     /** update user by id
@@ -70,9 +72,8 @@ public class UserController {
      * @return
      */
     @PutMapping("/user/{id}")
-    public JsonObject putUser(@PathVariable(value = "id") int id, @Valid @RequestBody User user) {
-//        return this.userRepository.;
-        return null;
+    public void putUser(@PathVariable(value = "id") int id, @Valid @RequestBody User user) {
+        this.userRepository.save(user);
     }
 
     /** delete user by id
@@ -80,7 +81,7 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/user/{id}")
-    public JsonObject deleteUser(@PathVariable(value = "id") int id) {
-        return null;
+    public void deleteUser(@PathVariable(value = "id") UUID id) {
+        this.userRepository.findById(id).ifPresent(user -> this.userRepository.delete(user));
     }
 }
