@@ -2,12 +2,12 @@ package com.cloud.models;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.util.UUID;
+import java.math.BigInteger;
 
 public class User {
     private @Id
     @GeneratedValue
-    UUID id;
+    BigInteger id;
 
     private String firstName;
     private String lastName;
@@ -22,11 +22,11 @@ public class User {
         this.position = position;
     }
 
-    public UUID getId() {
+    public BigInteger getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(BigInteger id) {
         this.id = id;
     }
 
@@ -65,7 +65,7 @@ public class User {
     @Override
     public String toString() {
         return "{" +
-                "\"id\":\"" + id + "\"," +
+                "\"id\":" + id + "," +
                 "\"firstName\":\"" + firstName + "\"," +
                 "\"lastName\":\"" + lastName + "\"," +
                 "\"birthDay\":\"" + birthDay + "\"," +

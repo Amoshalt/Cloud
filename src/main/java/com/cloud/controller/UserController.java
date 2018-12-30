@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/")
@@ -24,9 +24,7 @@ public class UserController {
      */
     @GetMapping("/user")
     public List<User> getUsers() {
-        System.out.println("coucou");
         List<User> users = this.userRepository.findAll();
-        System.out.println(users);
         return users;
     }
 
@@ -35,7 +33,6 @@ public class UserController {
      */
     @PutMapping("/user")
     public void putUsers(@Valid @RequestBody List<User> users) {
-        System.out.println(users);
         this.userRepository.deleteAll();
         this.userRepository.saveAll(users);
     }
@@ -54,7 +51,7 @@ public class UserController {
      * @return User
      */
     @GetMapping("/user/{id}")
-    public Optional<User> getUser(@PathVariable(value = "id") UUID id) {
+    public Optional<User> getUser(@PathVariable(value = "id") BigInteger id) {
         return this.userRepository.findById(id);
     }
 
@@ -81,7 +78,7 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/user/{id}")
-    public void deleteUser(@PathVariable(value = "id") UUID id) {
+    public void deleteUser(@PathVariable(value = "id") BigInteger id) {
         this.userRepository.findById(id).ifPresent(user -> this.userRepository.delete(user));
     }
 }
