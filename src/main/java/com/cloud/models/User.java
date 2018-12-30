@@ -61,4 +61,15 @@ public class User {
     public void setPosition(Position position) {
         this.position = position;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\":\"" + id + "\"," +
+                "\"firstName\":\"" + firstName + "\"," +
+                "\"lastName\":\"" + lastName + "\"," +
+                "\"birthDay\":\"" + birthDay + "\"," +
+                "\"position\":" + position +
+                "}";
+    }
 }

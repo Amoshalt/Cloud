@@ -1,41 +1,24 @@
 package com.cloud.controller;
 
-import org.junit.Before;
+import com.cloud.CloudApplicationTests;
+import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.UUID;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration
-@WebAppConfiguration
-public class UserControllerTest {
-    
-    @Autowired
-    private WebApplicationContext ctx;
 
-    private MockMvc mockMvc;
-
-    @Before
-    public void setUp() throws Exception {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build();
-    }
+public class UserControllerTest extends CloudApplicationTests {
 
     @Test
-    public void getUsers() {
+    public void getUsers() throws Exception {
+        mockMvc.perform(get("/user/"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf("[" + user1 + "," + user2 + "]")));
     }
 
     @Test
@@ -61,19 +44,17 @@ public class UserControllerTest {
 
     @Test
     public void deleteUser() throws Exception {
-        UUID id = UUID.fromString("");
-        mockMvc.perform(MockMvcRequestBuilders.delete("/user/" + id))
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/user/" + user1.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
-    }
 
-    @Configuration
-    public static class TestConfiguration {
-
-        @Bean
-        public UserController userController() {
-            return new UserController();
-        }
-
+        mockMvc.perform(get("/user/" + user2.getId())).andDo(print()).andExpect(MockMvcResultMatchers.content().string(user2.toString()));
+        Assert.assertEquals(String.valueOf("null"),
+                mockMvc.perform(get("/user/" + user1.getId()))
+                        .andDo(print())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString());
     }
 }
