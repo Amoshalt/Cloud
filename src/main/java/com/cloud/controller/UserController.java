@@ -1,37 +1,49 @@
 package com.cloud.controller;
 
 import com.cloud.models.User;
+import com.cloud.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.json.JsonObject;
-import javax.validation.Valid;
+import net.minidev.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/")
 public class UserController {
 
+    @Autowired
+    private UserRepository repository;
 
     /** get all users
      * @return
      */
-    @GetMapping("/users")
-    public User[] getUsers() {
-        return null;
+    @GetMapping("/user")
+    public List<User> getUsers() {
+        return repository.findAll();
     }
 
     /** replace users by users
      * @return
      */
-    @PutMapping("/users")
-    public JsonObject putUsers() {
+    @PutMapping("/user")
+    public JsonObject putUsers(@RequestBody User[] users) {
+        repository.deleteAll();
+        repository.insert(Arrays.asList(users));
         return null;
     }
 
     /** delete all users
      * @return
      */
-    @DeleteMapping("/users")
+    @DeleteMapping("/user")
     public JsonObject deleteUsers() {
+        repository.deleteAll();
         return null;
     }
 
@@ -41,7 +53,7 @@ public class UserController {
      * @return User
      */
     @GetMapping("/user/{id}")
-    public User getUser(@PathVariable(value = "id") int id) {
+    public User getUser(@PathVariable(value = "id") String id) {
         return null;
     }
 
@@ -59,7 +71,8 @@ public class UserController {
      * @return
      */
     @PutMapping("/user/{id}")
-    public JsonObject putUser(@PathVariable(value = "id") int id) {
+    public JsonObject putUser(@PathVariable(value = "id") String id, @RequestBody User user) {
+        repository.save(user);
         return null;
     }
 
@@ -68,7 +81,8 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/user/{id}")
-    public JsonObject deleteUser(@PathVariable(value = "id") int id) {
+    public JsonObject deleteUser(@PathVariable(value = "id") String id) {
+        //TODO
         return null;
     }
 }
