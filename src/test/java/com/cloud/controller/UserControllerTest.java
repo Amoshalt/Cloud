@@ -6,7 +6,9 @@ import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,16 +24,45 @@ public class UserControllerTest extends CloudApplicationTests {
     }
 
     @Test
-    public void putUsers() {
-
+    public void putUsers() throws Exception {
+//        mockMvc.perform(put("/user/"))
+//                .andDo(print())
+//                .andExpect(status().isOk())
+//                .andExpect(MockMvcResultMatchers.content().string(String.valueOf("[" + user1 + "," + user2 + "]")));
     }
 
     @Test
-    public void deleteUsers() {
+    public void deleteUsers() throws Exception {
+        mockMvc.perform(delete("/user/"))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        Assert.assertEquals(String.valueOf("null"),
+                mockMvc.perform(get("/user/" + user1.getId()))
+                        .andDo(print())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString());
+        Assert.assertEquals(String.valueOf("null"),
+                mockMvc.perform(get("/user/" + user1.getId()))
+                        .andDo(print())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString());
+        Assert.assertEquals("[]",
+                mockMvc.perform(get("/user/"))
+                        .andDo(print())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString());
     }
 
     @Test
-    public void getUser() {
+    public void getUser() throws Exception {
+        mockMvc.perform(get("/user/" + user1.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(user1)));
     }
 
     @Test
@@ -44,8 +75,7 @@ public class UserControllerTest extends CloudApplicationTests {
 
     @Test
     public void deleteUser() throws Exception {
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/user/" + user1.getId()))
+        mockMvc.perform(delete("/user/" + user1.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
 
