@@ -3,6 +3,8 @@ package com.cloud.controller;
 import com.cloud.models.User;
 import com.cloud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,11 +37,13 @@ public class UserController {
      * @return
      */
     @PutMapping("/user")
-    public void putUsers(@Valid @RequestBody List<User> users) {
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public List<User> putUsers(@Valid @RequestBody List<User> users) {
         System.out.println("\nClear DB");
         this.userRepository.deleteAll();
         System.out.println("Put " + users.size() + " users in DB");
         this.userRepository.saveAll(users);
+        return getUsers();
     }
 
     /** delete all users
@@ -57,9 +61,15 @@ public class UserController {
      * @return User
      */
     @GetMapping("/user/{id}")
-    public Optional<User> getUser(@PathVariable(value = "id") String id) {
+    public ResponseEntity<User> getUser(@PathVariable(value = "id") String id) {
         System.out.println("\nGet user " + id);
-        return userRepository.findById(id);
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent()) {
+            userRepository.delete(user.get());
+            return new ResponseEntity<>(user.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>((User) null, HttpStatus.NOT_FOUND);
+        }
     }
 
 
@@ -67,6 +77,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/user")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public @Valid User postUser(@Valid @RequestBody User user) {
         System.out.println("\nPost ???");
         return this.userRepository.insert(user);
@@ -88,12 +99,14 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/user/{id}")
-    public void deleteUser(@PathVariable(value = "id") String id) {
+    public ResponseEntity deleteUser(@PathVariable(value = "id") String id) {
         System.out.println("\nDelete user " + id);
-        this.userRepository.findById(id).ifPresent(user -> this.userRepository.delete(user));
-    }
-
-    private BigInteger parseID(String id) {
-        return BigInteger.valueOf(Long.parseLong(id));
+        Optional<User> user = this.userRepository.findById(id);
+        if(user.isPresent()) {
+            userRepository.delete(user.get());
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
