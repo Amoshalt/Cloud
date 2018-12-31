@@ -3,48 +3,56 @@ package com.cloud.controller;
 import com.cloud.models.User;
 import com.cloud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.math.BigInteger;
+import java.util.*;
 import javax.json.JsonObject;
-import net.minidev.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/")
 public class UserController {
 
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
+
 
     /** get all users
      * @return
      */
     @GetMapping("/user")
     public List<User> getUsers() {
-        return repository.findAll();
+        System.out.println("\nGet all users");
+        List<User> users = this.userRepository.findAll();
+        System.out.println("Nb of users : " + users.size());
+        return users;
     }
 
     /** replace users by users
      * @return
      */
     @PutMapping("/user")
-    public JsonObject putUsers(@RequestBody User[] users) {
-        repository.deleteAll();
-        repository.insert(Arrays.asList(users));
-        return null;
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public List<User> putUsers(@Valid @RequestBody List<User> users) {
+        System.out.println("\nClear DB");
+        this.userRepository.deleteAll();
+        System.out.println("Put " + users.size() + " users in DB");
+        this.userRepository.saveAll(users);
+        return getUsers();
     }
 
     /** delete all users
      * @return
      */
     @DeleteMapping("/user")
-    public JsonObject deleteUsers() {
-        repository.deleteAll();
-        return null;
+    public void deleteUsers() {
+        System.out.println("\nClear DB");
+        this.userRepository.deleteAll();
     }
 
 
@@ -53,8 +61,15 @@ public class UserController {
      * @return User
      */
     @GetMapping("/user/{id}")
-    public User getUser(@PathVariable(value = "id") String id) {
-        return null;
+    public ResponseEntity<User> getUser(@PathVariable(value = "id") String id) {
+        System.out.println("\nGet user " + id);
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent()) {
+            userRepository.delete(user.get());
+            return new ResponseEntity<>(user.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>((User) null, HttpStatus.NOT_FOUND);
+        }
     }
 
 
@@ -62,8 +77,10 @@ public class UserController {
      * @return
      */
     @PostMapping("/user")
-    public JsonObject postUser() {
-        return null;
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public @Valid User postUser(@Valid @RequestBody User user) {
+        System.out.println("\nPost ???");
+        return this.userRepository.insert(user);
     }
 
     /** update user by id
@@ -72,7 +89,8 @@ public class UserController {
      */
     @PutMapping("/user/{id}")
     public JsonObject putUser(@PathVariable(value = "id") String id, @RequestBody User user) {
-        repository.save(user);
+        System.out.println("\nPut user " + id);
+        userRepository.save(user);
         return null;
     }
 
@@ -81,8 +99,14 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/user/{id}")
-    public JsonObject deleteUser(@PathVariable(value = "id") String id) {
-        //TODO
-        return null;
+    public ResponseEntity deleteUser(@PathVariable(value = "id") String id) {
+        System.out.println("\nDelete user " + id);
+        Optional<User> user = this.userRepository.findById(id);
+        if(user.isPresent()) {
+            userRepository.delete(user.get());
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
