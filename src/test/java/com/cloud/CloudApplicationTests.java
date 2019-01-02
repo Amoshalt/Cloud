@@ -25,6 +25,7 @@ import org.springframework.web.context.WebApplicationContext;
 @TestPropertySource(locations="classpath:test.properties")
 public class CloudApplicationTests{
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     protected UserRepository userRepository;
 
@@ -34,6 +35,7 @@ public class CloudApplicationTests{
     protected User user1;
     protected User user2;
     protected User user3;
+    protected User user4;
 
 
 
@@ -41,13 +43,12 @@ public class CloudApplicationTests{
     public void setUp() {
 
         user1= new User("Alice","Stop", new Position(0,0), "20/06/1996");
-        user2= new User("Bob","Crypto", new Position(1.0,2.1), "20/06/1996");
-        user3= new User("Carl","Immediatly", new Position(1.23,3.56), "20/06/1996");
+        user2= new User("Bob","Crypto", new Position(1.0,2.1), "21/06/1996");
+        user3= new User("Carl","Immediately", new Position(1.23,3.56), "22/06/1996");
+        user4= new User("John","Doe", new Position(4.56,9.87), "12/12/1999");
 
         this.userRepository.save(user1);
-        System.out.println(user1.getId());
         this.userRepository.save(user2);
-        System.out.println(user2.getId());
     }
 
     @After
