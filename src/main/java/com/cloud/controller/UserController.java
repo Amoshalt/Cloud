@@ -67,7 +67,7 @@ public class UserController {
             userRepository.delete(user.get());
             return new ResponseEntity<>(user.get(), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>((User) null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -78,7 +78,7 @@ public class UserController {
     @PostMapping("/user")
     @ResponseStatus(value = HttpStatus.CREATED)
     public @Valid User postUser(@Valid @RequestBody User user) {
-        System.out.println("\nPost ???");
+        System.out.println("\nPost user");
         return this.userRepository.insert(user);
     }
 

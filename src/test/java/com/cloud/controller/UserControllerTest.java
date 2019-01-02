@@ -9,9 +9,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,7 +41,7 @@ public class UserControllerTest extends CloudApplicationTests {
     private String getUserJSON(User u) {
         StringBuilder builder = new StringBuilder();
         builder.append("{");
-        if(u.getId() != null && u.getId() != "") {
+        if(u.getId() != null && !u.getId().equals("")) {
             builder.append("\"id\":\"")
                     .append(u.getId())
                     .append("\",");
@@ -74,7 +72,7 @@ public class UserControllerTest extends CloudApplicationTests {
                 getUserRegex(user3)+
                 ","+
                 getUserRegex(user4)+
-                "\\]$");
+                "]$");
         Matcher matcher = pattern.matcher(mockMvc.perform(put("/user/").contentType("application/json").content("["
                             + getUserJSON(user3)
                             + ","
@@ -123,7 +121,23 @@ public class UserControllerTest extends CloudApplicationTests {
     }
 
     @Test
-    public void postUser() {
+    public void postUser() throws Exception {
+        mockMvc.perform(delete("/user"))
+                .andExpect(status().isOk());
+        Assert.assertEquals(String.valueOf(user1),
+            mockMvc.perform(post("/user")
+                .contentType("application/json")
+                .content(getUserJSON(user1)))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+        //Check data change
+        mockMvc.perform(get("/user/" + user1.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(user1)));
     }
 
     @Test
