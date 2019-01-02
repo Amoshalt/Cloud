@@ -1,32 +1,43 @@
 package com.cloud.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.math.BigInteger;
 
+@Document("users")
 public class User {
     private @Id
     @GeneratedValue
-    BigInteger id;
+    String id;
 
     private String firstName;
     private String lastName;
-    private String birthDay;
     private Position position;
+    private String birthDay;
 
 
-    public User(String firstName, String lastName, String birthDay, Position position) {
+    public User(String firstName, String lastName, Position position, String birthDay) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.birthDay = birthDay;
         this.position = position;
+        this.birthDay = birthDay;
     }
 
-    public BigInteger getId() {
+    public User() {
+        this.firstName = "John";
+        this.lastName = "Doe";
+        this.position = new Position();
+        this.birthDay = "01/01/2000";
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(BigInteger id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -34,6 +45,7 @@ public class User {
         return firstName;
     }
 
+    @JsonProperty("firstName")
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -42,6 +54,7 @@ public class User {
         return lastName;
     }
 
+    @JsonProperty("lastName")
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -50,6 +63,7 @@ public class User {
         return birthDay;
     }
 
+    @JsonProperty("birthDay")
     public void setBirthDay(String birthDay) {
         this.birthDay = birthDay;
     }
@@ -58,18 +72,23 @@ public class User {
         return position;
     }
 
+    @JsonProperty("position")
     public void setPosition(Position position) {
         this.position = position;
     }
 
     @Override
     public String toString() {
-        return "{" +
-                "\"id\":" + id + "," +
-                "\"firstName\":\"" + firstName + "\"," +
-                "\"lastName\":\"" + lastName + "\"," +
-                "\"birthDay\":\"" + birthDay + "\"," +
-                "\"position\":" + position +
-                "}";
+        StringBuilder builder = new StringBuilder();
+        builder.append("{ 'firstname':'")
+                .append(firstName)
+                .append("', 'lastname':'")
+                .append(lastName)
+                .append("', 'birthdate':'")
+                .append(birthDay)
+                .append("', 'position':")
+                .append(position)
+                .append(" }");
+        return builder.toString();
     }
 }

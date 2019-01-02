@@ -10,6 +10,11 @@ public class Position {
         this.lon = lon;
     }
 
+    public Position() {
+        lat = 0;
+        lon = 0;
+    }
+
     public double getLat() {
         return lat;
     }
@@ -28,9 +33,12 @@ public class Position {
 
     @Override
     public String toString() {
-        return "{" +
-                "\"lat\":" + lat +
-                ",\"lon\":" + lon +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        builder.append("{ 'lon':")
+                .append(lon)
+                .append(", 'lat':")
+                .append(lat)
+                .append(" }");
+        return builder.toString();
     }
 }

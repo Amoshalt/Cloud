@@ -38,9 +38,9 @@ public class CloudApplicationTests{
     @Before
     public void setUp() {
 
-        user1= new User("Alice","Stop", "20/06/1996", new Position(0,0));
-        user2= new User("Bob","Crypto", "20/06/1996", new Position(1.0,2.1));
-        user3= new User("Carl","Immediatly", "20/06/1996", new Position(1.23,3.56));
+        user1= new User("Alice","Stop", new Position(0,0), "20/06/1996");
+        user2= new User("Bob","Crypto", new Position(1.0,2.1), "20/06/1996");
+        user3= new User("Carl","Immediatly", new Position(1.23,3.56), "20/06/1996");
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build();
         this.userRepository.save(user1);

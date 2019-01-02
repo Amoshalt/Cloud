@@ -3,17 +3,19 @@ package com.cloud.controller;
 import com.cloud.models.User;
 import com.cloud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.math.BigInteger;
+import java.util.*;
+import javax.json.JsonObject;
+
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/")
 public class UserController {
-
 
     @Autowired
     private UserRepository userRepository;
@@ -24,7 +26,9 @@ public class UserController {
      */
     @GetMapping("/user")
     public List<User> getUsers() {
+        System.out.println("\nGet all users");
         List<User> users = this.userRepository.findAll();
+        System.out.println("Nb of users : " + users.size());
         return users;
     }
 
@@ -32,9 +36,13 @@ public class UserController {
      * @return
      */
     @PutMapping("/user")
-    public void putUsers(@Valid @RequestBody List<User> users) {
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public List<User> putUsers(@Valid @RequestBody List<User> users) {
+        System.out.println("\nClear DB");
         this.userRepository.deleteAll();
+        System.out.println("Put " + users.size() + " users in DB");
         this.userRepository.saveAll(users);
+        return getUsers();
     }
 
     /** delete all users
@@ -42,6 +50,7 @@ public class UserController {
      */
     @DeleteMapping("/user")
     public void deleteUsers() {
+        System.out.println("\nClear DB");
         this.userRepository.deleteAll();
     }
 
@@ -51,8 +60,15 @@ public class UserController {
      * @return User
      */
     @GetMapping("/user/{id}")
-    public Optional<User> getUser(@PathVariable(value = "id") BigInteger id) {
-        return this.userRepository.findById(id);
+    public ResponseEntity<User> getUser(@PathVariable(value = "id") String id) {
+        System.out.println("\nGet user " + id);
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent()) {
+            userRepository.delete(user.get());
+            return new ResponseEntity<>(user.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>((User) null, HttpStatus.NOT_FOUND);
+        }
     }
 
 
@@ -60,7 +76,9 @@ public class UserController {
      * @return
      */
     @PostMapping("/user")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public @Valid User postUser(@Valid @RequestBody User user) {
+        System.out.println("\nPost ???");
         return this.userRepository.insert(user);
     }
 
@@ -69,8 +87,10 @@ public class UserController {
      * @return
      */
     @PutMapping("/user/{id}")
-    public void putUser(@PathVariable(value = "id") int id, @Valid @RequestBody User user) {
-        this.userRepository.save(user);
+    public JsonObject putUser(@PathVariable(value = "id") String id, @RequestBody User user) {
+        System.out.println("\nPut user " + id);
+        userRepository.save(user);
+        return null;
     }
 
     /** delete user by id
@@ -78,7 +98,14 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/user/{id}")
-    public void deleteUser(@PathVariable(value = "id") BigInteger id) {
-        this.userRepository.findById(id).ifPresent(user -> this.userRepository.delete(user));
+    public ResponseEntity deleteUser(@PathVariable(value = "id") String id) {
+        System.out.println("\nDelete user " + id);
+        Optional<User> user = this.userRepository.findById(id);
+        if(user.isPresent()) {
+            userRepository.delete(user.get());
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
