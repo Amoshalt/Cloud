@@ -5,8 +5,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-import java.math.BigInteger;
 
 @Document("users")
 public class User {

@@ -2,7 +2,6 @@ package com.cloud.controller;
 
 import com.cloud.CloudApplicationTests;
 import com.cloud.models.User;
-import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -10,7 +9,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
