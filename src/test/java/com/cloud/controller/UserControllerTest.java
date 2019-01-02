@@ -3,7 +3,7 @@ package com.cloud.controller;
 import com.cloud.CloudApplicationTests;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 public class UserControllerTest extends CloudApplicationTests {
 
@@ -37,13 +36,13 @@ public class UserControllerTest extends CloudApplicationTests {
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        Assert.assertEquals(String.valueOf("null"),
+        Assert.assertEquals(String.valueOf(""),
                 mockMvc.perform(get("/user/" + user1.getId()))
                         .andDo(print())
                         .andReturn()
                         .getResponse()
                         .getContentAsString());
-        Assert.assertEquals(String.valueOf("null"),
+        Assert.assertEquals(String.valueOf(""),
                 mockMvc.perform(get("/user/" + user1.getId()))
                         .andDo(print())
                         .andReturn()
@@ -77,14 +76,18 @@ public class UserControllerTest extends CloudApplicationTests {
     public void deleteUser() throws Exception {
         mockMvc.perform(delete("/user/" + user1.getId()))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/user/" + user2.getId())).andDo(print()).andExpect(MockMvcResultMatchers.content().string(user2.toString()));
-        Assert.assertEquals(String.valueOf("null"),
+        Assert.assertEquals(String.valueOf(""),
                 mockMvc.perform(get("/user/" + user1.getId()))
                         .andDo(print())
                         .andReturn()
                         .getResponse()
                         .getContentAsString());
+
+        mockMvc.perform(delete("/user/fakeID"))
+                .andDo(print())
+                .andExpect(status().isInternalServerError());
     }
 }

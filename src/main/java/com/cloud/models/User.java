@@ -80,15 +80,17 @@ public class User {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("{ 'firstname':'")
+        builder.append("{\"id\":\"")
+                .append(id)
+                .append("\",\"firstName\":\"")
                 .append(firstName)
-                .append("', 'lastname':'")
+                .append("\",\"lastName\":\"")
                 .append(lastName)
-                .append("', 'birthdate':'")
-                .append(birthDay)
-                .append("', 'position':")
+                .append("\",\"position\":")
                 .append(position)
-                .append(" }");
+                .append(",\"birthDay\":\"")
+                .append(birthDay)
+                .append("\"}");
         return builder.toString();
     }
 }

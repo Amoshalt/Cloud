@@ -34,11 +34,11 @@ public class Position {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("{ 'lon':")
-                .append(lon)
-                .append(", 'lat':")
+        builder.append("{\"lat\":")
                 .append(lat)
-                .append(" }");
+                .append(",\"lon\":")
+                .append(lon)
+                .append("}");
         return builder.toString();
     }
 }
