@@ -34,7 +34,7 @@ If you don't know how to do that, follow the next steps :
  3. Enjoy, the database used is *cloud* and the collection edited is named *users*
 
 ## Clever-Cloud use
-Manipulation tu do on first use only.
+Manipulation to do on first use only.
  * Go on your machine view
  * In '*Services Liés*' panel add your *MongoDB* addon
  * Application detects all parameters from the addon's published configuration by itself.
