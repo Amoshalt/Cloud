@@ -34,30 +34,30 @@ public class UserControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build();
     }
 
-    @Test
-    public void getUsers() {
-    }
-
-    @Test
-    public void putUsers() {
-
-    }
-
-    @Test
-    public void deleteUsers() {
-    }
-
-    @Test
-    public void getUser() {
-    }
-
-    @Test
-    public void postUser() {
-    }
-
-    @Test
-    public void putUser() {
-    }
+//    @Test
+//    public void getUsers() {
+//    }
+//
+//    @Test
+//    public void putUsers() {
+//
+//    }
+//
+//    @Test
+//    public void deleteUsers() {
+//    }
+//
+//    @Test
+//    public void getUser() {
+//    }
+//
+//    @Test
+//    public void postUser() {
+//    }
+//
+//    @Test
+//    public void putUser() {
+//    }
 
     @Test
     public void deleteUser() throws Exception {
