@@ -25,7 +25,7 @@ public class UserController {
 
 
     /** get all users
-     * @return
+     * @return List that contains all the users in the DB
      */
     @GetMapping("/user")
     public List<User> getUsers(@RequestParam MultiValueMap<String, String> params) {
@@ -61,7 +61,7 @@ public class UserController {
     }*/
 
     /** replace users by users
-     * @return
+     * @return List that contains all the users in the DB
      */
     @PutMapping("/user")
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -74,7 +74,7 @@ public class UserController {
     }
 
     /** delete all users
-     * @return
+     * @return Empty array
      */
     @DeleteMapping("/user")
     public void deleteUsers() {
@@ -84,8 +84,8 @@ public class UserController {
 
 
     /** get user by id
-     * @param id
-     * @return User
+     * @param id of the user to return
+     * @return User with the matching id if it exists
      */
     @GetMapping("/user/{id}")
     public ResponseEntity<User> getUser(@PathVariable(value = "id") String id) {
@@ -101,7 +101,8 @@ public class UserController {
 
 
     /** add user
-     * @return
+     * @param user to add
+     * @return The added user
      */
     @PostMapping("/user")
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -111,8 +112,9 @@ public class UserController {
     }
 
     /** update user by id
-     * @param id
-     * @return
+     * @param id of the user to update
+     * @param user containing the new data
+     * @return nothing
      */
     @PutMapping("/user/{id}")
     public JsonObject putUser(@PathVariable(value = "id") String id, @RequestBody User user) {
@@ -122,8 +124,8 @@ public class UserController {
     }
 
     /** delete user by id
-     * @param id
-     * @return
+     * @param id of the user to delete
+     * @return nothing
      */
     @DeleteMapping("/user/{id}")
     public ResponseEntity deleteUser(@PathVariable(value = "id") String id) {
