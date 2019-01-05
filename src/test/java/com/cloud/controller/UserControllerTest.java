@@ -15,6 +15,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class UserControllerTest extends CloudApplicationTests {
 
+    /**
+     * Get the regex to identify a user. Works better than a classical string if the id is null
+     * @param u is the user to identify
+     * @return regex matching the user JSON representation
+     */
     private String getUserRegex(User u) {
         StringBuilder builder = new StringBuilder();
         builder.append("\\{\"id\":\"");
@@ -38,6 +43,11 @@ public class UserControllerTest extends CloudApplicationTests {
         return builder.toString();
     }
 
+    /**
+     * Get a JSON representation of an user. Works well if id is set
+     * @param u is the user to convert
+     * @return a JSON representation of the user (without the id if null)
+     */
     private String getUserJSON(User u) {
         StringBuilder builder = new StringBuilder();
         builder.append("{");
@@ -58,6 +68,10 @@ public class UserControllerTest extends CloudApplicationTests {
         return builder.toString();
     }
 
+    /**
+     * Test GET /user
+     * @throws Exception
+     */
     @Test
     public void getUsers() throws Exception {
         mockMvc.perform(get("/user/"))
@@ -66,6 +80,10 @@ public class UserControllerTest extends CloudApplicationTests {
                 .andExpect(MockMvcResultMatchers.content().string(String.valueOf("[" + user1 + "," + user2 + "]")));
     }
 
+    /**
+     * Test PUT /user
+     * @throws Exception
+     */
     @Test
     public void putUsers() throws Exception {
         Pattern pattern = Pattern.compile("^\\["+
@@ -86,6 +104,10 @@ public class UserControllerTest extends CloudApplicationTests {
         Assert.assertTrue(matcher.matches());
     }
 
+    /**
+     * Test DELETE /user
+     * @throws Exception
+     */
     @Test
     public void deleteUsers() throws Exception {
         mockMvc.perform(delete("/user/"))
@@ -112,6 +134,10 @@ public class UserControllerTest extends CloudApplicationTests {
                         .getContentAsString());
     }
 
+    /**
+     * Test GET /USER/{id}
+     * @throws Exception
+     */
     @Test
     public void getUser() throws Exception {
         mockMvc.perform(get("/user/" + user1.getId()))
@@ -120,6 +146,10 @@ public class UserControllerTest extends CloudApplicationTests {
                 .andExpect(MockMvcResultMatchers.content().string(String.valueOf(user1)));
     }
 
+    /**
+     * Test POST /user
+     * @throws Exception
+     */
     @Test
     public void postUser() throws Exception {
         mockMvc.perform(delete("/user"))
@@ -140,6 +170,10 @@ public class UserControllerTest extends CloudApplicationTests {
                 .andExpect(MockMvcResultMatchers.content().string(String.valueOf(user1)));
     }
 
+    /**
+     * Test PUT /user/{id}
+     * @throws Exception
+     */
     @Test
     public void putUser() throws Exception {
         //Assert there is some data for user 2 id
@@ -164,13 +198,17 @@ public class UserControllerTest extends CloudApplicationTests {
                 .andExpect(MockMvcResultMatchers.content().string(String.valueOf(user2)));
     }
 
+    /**
+     * Test DELETE /user/{id}
+     * @throws Exception
+     */
     @Test
     public void deleteUser() throws Exception {
         //Delete user1
         mockMvc.perform(delete("/user/" + user1.getId()))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        //Check that user1 is in DB anymore
+        //Check that user1 isn't in DB anymore
         mockMvc.perform(get("/user/" + user2.getId())).andDo(print()).andExpect(MockMvcResultMatchers.content().string(user2.toString()));
         Assert.assertEquals(String.valueOf(""),
                 mockMvc.perform(get("/user/" + user1.getId()))
