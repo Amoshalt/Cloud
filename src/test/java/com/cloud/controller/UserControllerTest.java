@@ -2,10 +2,16 @@ package com.cloud.controller;
 
 import com.cloud.CloudApplicationTests;
 import com.cloud.models.User;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.io.*;
+import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,8 +75,19 @@ public class UserControllerTest extends CloudApplicationTests {
     }
 
     /**
+     * Put 2000 users in database from /json/users.json
+     * @throws Exception if error happen
+     */
+    private void putUsersFromJSON() throws Exception {
+        File file = new ClassPathResource("json/users.json").getFile();
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        mockMvc.perform(put("/user/").contentType("application/json").content(br.readLine()))
+                .andExpect(status().isCreated());
+    }
+
+    /**
      * Test GET /user
-     * @throws Exception
+     * @throws Exception if error happen
      */
     @Test
     public void getUsers() throws Exception {
@@ -82,7 +99,7 @@ public class UserControllerTest extends CloudApplicationTests {
 
     /**
      * Test PUT /user
-     * @throws Exception
+     * @throws Exception if error happen
      */
     @Test
     public void putUsers() throws Exception {
@@ -106,7 +123,7 @@ public class UserControllerTest extends CloudApplicationTests {
 
     /**
      * Test DELETE /user
-     * @throws Exception
+     * @throws Exception if error happen
      */
     @Test
     public void deleteUsers() throws Exception {
@@ -136,7 +153,7 @@ public class UserControllerTest extends CloudApplicationTests {
 
     /**
      * Test GET /USER/{id}
-     * @throws Exception
+     * @throws Exception if error happen
      */
     @Test
     public void getUser() throws Exception {
@@ -148,7 +165,7 @@ public class UserControllerTest extends CloudApplicationTests {
 
     /**
      * Test POST /user
-     * @throws Exception
+     * @throws Exception if error happen
      */
     @Test
     public void postUser() throws Exception {
@@ -172,7 +189,7 @@ public class UserControllerTest extends CloudApplicationTests {
 
     /**
      * Test PUT /user/{id}
-     * @throws Exception
+     * @throws Exception if error happen
      */
     @Test
     public void putUser() throws Exception {
@@ -200,7 +217,7 @@ public class UserControllerTest extends CloudApplicationTests {
 
     /**
      * Test DELETE /user/{id}
-     * @throws Exception
+     * @throws Exception if error happen
      */
     @Test
     public void deleteUser() throws Exception {
@@ -221,5 +238,60 @@ public class UserControllerTest extends CloudApplicationTests {
         mockMvc.perform(delete("/user/fakeID"))
                 .andDo(print())
                 .andExpect(status().isInternalServerError());
+    }
+
+    /**
+     * GET a page of user and convert it into a sorted array
+     * @param num index of the wanted page (negative index will return default page)
+     * @return Array of users sorted by index
+     * @throws Exception if error happen
+     */
+    private List<User> getPage(int num) throws Exception {
+        String url = "/user";
+        if(num >= 0) {
+            url += "?page=" + num;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        TypeReference<List<User>> typeReference = new TypeReference<List<User>>(){};
+        String content = mockMvc.perform(get(url))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        List<User> users = mapper.readValue(content, typeReference);
+        users.sort(Comparator.comparing(User::getId));
+        return users;
+    }
+
+    /**
+     * Step 2 : pagination
+     * Test GET /USER and GET /user?page=xxx
+     * @throws Exception if error happen
+     */
+    @Test
+    public void pagination() throws Exception {
+        deleteUser();
+        putUsersFromJSON();
+
+        //Default page
+        List<User> users = getPage(-1);
+        Assert.assertEquals(users.size(), 100);
+
+        //First page (index 0)
+        //Should be the same as default
+        List<User> users0 = getPage(0);
+        Assert.assertEquals(users0.size(), 100);
+        Assert.assertArrayEquals(users0.toArray(), users.toArray());
+
+        //Page with index 2, should be different than others
+        List<User> users2 = getPage(2);
+        Assert.assertEquals(users2.size(), 100);
+        //Arrays are sorted => check that users aren't just rearranged
+        Assert.assertNotEquals(users.toArray(), users2.toArray());
+
+        //Page with high index should be empty
+        List<User> users3 = getPage(2000);
+        Assert.assertEquals(users3.size(), 0);
     }
 }
