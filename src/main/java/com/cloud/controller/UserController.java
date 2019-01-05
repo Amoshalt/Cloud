@@ -3,8 +3,11 @@ package com.cloud.controller;
 import com.cloud.models.User;
 import com.cloud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,9 +28,17 @@ public class UserController {
      * @return List that contains all the users in the DB
      */
     @GetMapping("/user")
-    public List<User> getUsers() {
-        System.out.println("\nGet all users");
-        List<User> users = this.userRepository.findAll();
+    public List<User> getUsers(@RequestParam MultiValueMap<String, String> params) {
+        List<User> users;
+        int ipage = 0;
+        if(params != null && params.containsKey("page")) {
+
+            String arg = params.get("page").get(0);
+            ipage = Integer.parseInt(arg);
+        }
+        System.out.println("\nGet users from " + (ipage*100) + " to " + ((ipage*100) + 99));
+        Page<User> pusers = this.userRepository.findAll(PageRequest.of(ipage, 100));
+        users = pusers.getContent();
         System.out.println("Nb of users : " + users.size());
         return users;
     }
@@ -42,7 +53,7 @@ public class UserController {
         this.userRepository.deleteAll();
         System.out.println("Put " + users.size() + " users in DB");
         this.userRepository.saveAll(users);
-        return getUsers();
+        return getUsers(null);
     }
 
     /** delete all users
