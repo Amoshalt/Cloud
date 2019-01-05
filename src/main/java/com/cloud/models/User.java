@@ -43,6 +43,30 @@ public class User {
         this.birthDay = "01/01/2000";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
+        User user = (User)o;
+        return (user.getId().equals(id))
+                && (user.getFirstName().equals(firstName))
+                && (user.getLastName().equals(lastName));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result
+                + 43 * getId().hashCode()
+                + 61 * getLastName().hashCode()
+                + 93 * getFirstName().hashCode();
+        return result;
+    }
+
     /**
      * Getter
      * @return the id
