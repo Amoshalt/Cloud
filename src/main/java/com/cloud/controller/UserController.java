@@ -30,17 +30,8 @@ public class UserController {
     @GetMapping("/user")
     public List<User> getUsers(@RequestParam MultiValueMap<String, String> params) {
         List<User> users;
-        int ipage;
-        if(params == null || !params.containsKey("page")) {
-            /*
-            System.out.println("\nGet all users");
-            users = this.userRepository.findAll();
-            System.out.println("Nb of users : " + users.size());
-            System.out.println(params.size());
-            return users;
-            */
-            ipage = 0;
-        } else {
+        int ipage = 0;
+        if(params != null && params.containsKey("page")) {
 
             String arg = params.get("page").get(0);
             ipage = Integer.parseInt(arg);
@@ -51,14 +42,6 @@ public class UserController {
         System.out.println("Nb of users : " + users.size());
         return users;
     }
-/*
-    @GetMapping("/user")
-    public List<User> getUsers() {
-        System.out.println("\nGet all users");
-        List<User> users = this.userRepository.findAll();
-        System.out.println("Nb of users : " + users.size());
-        return users;
-    }*/
 
     /** replace users by users
      * @return List that contains all the users in the DB
