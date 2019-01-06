@@ -1,6 +1,8 @@
 package com.cloud.repositories;
 import com.cloud.models.User;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.geo.GeoResult;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -24,4 +26,7 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     @Query(value = "{ 'lastName' : ?0 }")
     List<User> findByName(String name, Pageable pageable);
+
+    @Query(value= "{'geoNear' : 'position', 'near' : [?0, ?1] }")
+    List<User> findByLocationNear(double lon, double lat, Pageable pageable);
 }
