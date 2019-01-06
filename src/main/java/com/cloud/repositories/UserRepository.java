@@ -21,4 +21,7 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     @Query(value = "{ 'birthDay' : {$gt : ?0, $lt : ?1}}")
     List<User> findbyExactAge(Date oldest, Date youngest, Pageable pageable);
+
+    @Query(value = "{ 'lastName' : ?0 }")
+    List<User> findByName(String name, Pageable pageable);
 }

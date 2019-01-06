@@ -158,4 +158,30 @@ public class UserController {
         }
         return response;
     }
+
+    @GetMapping("/user/search")
+    public ResponseEntity getUserFromText(@RequestParam MultiValueMap<String, String> params) {
+        ResponseEntity response = null;
+        if(params != null) {
+            int page = 0;
+            if(params.containsKey("page")) {
+                page = Integer.parseInt(params.get("page").get(0));
+                if(page < 0)
+                    page = 0;
+            }
+            if(params.containsKey("name") || params.containsKey("term")) {
+                String name;
+                if (params.containsKey("name"))
+                    name = params.get("name").get(0);
+                else name = params.get("term").get(0);
+                if (name.equals("")) {
+                    response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+                } else {
+                    List<User> users = userRepository.findByName(name, PageRequest.of(page, 100));
+                    response = new ResponseEntity<>(users, HttpStatus.OK);
+                }
+            }
+        }
+        return response;
+    }
 }
