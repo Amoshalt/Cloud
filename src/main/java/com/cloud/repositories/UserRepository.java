@@ -1,8 +1,6 @@
 package com.cloud.repositories;
 import com.cloud.models.User;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.geo.GeoResult;
-import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 

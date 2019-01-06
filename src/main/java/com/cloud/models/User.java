@@ -24,7 +24,6 @@ public class User {
     private static final SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
 
     private Date DateFromString(String str) {
-        System.out.println("Date : " + str);
         try {
             return format.parse(str);
         } catch (ParseException e) {
@@ -139,7 +138,6 @@ public class User {
      */
     public String getBirthDay() {
         String str = format.format(birthDay);
-        System.out.println("Format : " + str);
         return str;
     }
 
