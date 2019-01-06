@@ -11,7 +11,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.Instant;
 import java.util.*;
 import javax.json.JsonObject;
 
@@ -180,6 +179,27 @@ public class UserController {
                     List<User> users = userRepository.findByName(name, PageRequest.of(page, 100));
                     response = new ResponseEntity<>(users, HttpStatus.OK);
                 }
+            }
+        }
+        return response;
+    }
+
+    @GetMapping("/user/nearest")
+    public ResponseEntity getUserFromPosition(@RequestParam MultiValueMap<String, String> params) {
+        ResponseEntity response = null;
+        if(params != null) {
+            int page = 0;
+            if(params.containsKey("page")) {
+                page = Integer.parseInt(params.get("page").get(0));
+                if(page < 0)
+                    page = 0;
+            }
+            if(params.containsKey("lat") && params.containsKey("lon")) {
+                double lat, lon;
+                lat = Double.parseDouble(params.get("lat").get(0));
+                lon = Double.parseDouble(params.get("lon").get(0));
+                List<User> users = userRepository.findByLocationNear(lon, lat, PageRequest.of(page, 10));
+                response = new ResponseEntity<>(users, HttpStatus.OK);
             }
         }
         return response;

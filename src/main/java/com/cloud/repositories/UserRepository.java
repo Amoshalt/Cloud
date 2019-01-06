@@ -24,4 +24,7 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     @Query(value = "{ 'lastName' : ?0 }")
     List<User> findByName(String name, Pageable pageable);
+
+    @Query(value= "{'geoNear' : 'position', 'near' : [?0, ?1] }")
+    List<User> findByLocationNear(double lon, double lat, Pageable pageable);
 }
