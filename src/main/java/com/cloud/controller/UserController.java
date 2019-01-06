@@ -5,12 +5,14 @@ import com.cloud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.geo.Point;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.Instant;
 import java.util.*;
 import javax.json.JsonObject;
 
@@ -116,9 +118,92 @@ public class UserController {
         Optional<User> user = this.userRepository.findById(id);
         if(user.isPresent()) {
             userRepository.delete(user.get());
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            return new ResponseEntity(null, HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/user/age")
+    public ResponseEntity getUserFromAge(@RequestParam MultiValueMap<String, String> params) {
+        ResponseEntity response = null;
+        if(params != null) {
+            int age;
+            int page = 0;
+            if(params.containsKey("page")) {
+                page = Integer.parseInt(params.get("page").get(0));
+                if(page < 0)
+                    page = 0;
+            }
+            if(params.containsKey("gt")) {
+                age = Integer.parseInt(params.get("gt").get(0));
+                if(age < 0) {
+                    response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+                } else {
+                    Calendar cal = Calendar.getInstance();
+                    cal.add(Calendar.YEAR, -1 * age);
+                    Date ago = cal.getTime();
+                    List<User> users = userRepository.findOldest(ago, PageRequest.of(page, 100));
+                    response = new ResponseEntity<>(users, HttpStatus.OK);
+                }
+            } else if(params.containsKey("eq")) {
+                age = Integer.parseInt(params.get("eq").get(0));
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.YEAR, -1*age);
+                Date oldest = cal.getTime();
+                cal.add(Calendar.YEAR, 1);
+                Date youngest = cal.getTime();
+                List<User> users = userRepository.findbyExactAge(oldest, youngest, PageRequest.of(page, 100));
+                response = new ResponseEntity<>(users, HttpStatus.OK);
+            }
+        }
+        return response;
+    }
+
+    @GetMapping("/user/search")
+    public ResponseEntity getUserFromText(@RequestParam MultiValueMap<String, String> params) {
+        ResponseEntity response = null;
+        if(params != null) {
+            int page = 0;
+            if(params.containsKey("page")) {
+                page = Integer.parseInt(params.get("page").get(0));
+                if(page < 0)
+                    page = 0;
+            }
+            if(params.containsKey("name") || params.containsKey("term")) {
+                String name;
+                if (params.containsKey("name"))
+                    name = params.get("name").get(0);
+                else name = params.get("term").get(0);
+                if (name.equals("")) {
+                    response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+                } else {
+                    List<User> users = userRepository.findByName(name, PageRequest.of(page, 100));
+                    response = new ResponseEntity<>(users, HttpStatus.OK);
+                }
+            }
+        }
+        return response;
+    }
+
+    @GetMapping("/user/nearest")
+    public ResponseEntity getUserFromPosition(@RequestParam MultiValueMap<String, String> params) {
+        ResponseEntity response = null;
+        if(params != null) {
+            int page = 0;
+            if(params.containsKey("page")) {
+                page = Integer.parseInt(params.get("page").get(0));
+                if(page < 0)
+                    page = 0;
+            }
+            if(params.containsKey("lat") && params.containsKey("lon")) {
+                double lat, lon;
+                lat = Double.parseDouble(params.get("lat").get(0));
+                lon = Double.parseDouble(params.get("lon").get(0));
+                List<User> users = userRepository.findByLocationNear(lon, lat, PageRequest.of(page, 10));
+                response = new ResponseEntity<>(users, HttpStatus.OK);
+            }
+        }
+        return response;
     }
 }

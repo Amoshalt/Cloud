@@ -3,16 +3,24 @@ API rest for Antoine Caron, CLOUD.
 
 Subject [here](https://slashgear.github.io/cloud/)
 
+Git repository [here](https://www.github.com/Amoshalt/Cloud)
+
 ## Students
  - LOMBARDO Florian
  - REMOND Victor
  - TARDY Martial
 
 ## Introduction
-Groupe D
-Spring Boot
+Groupe D - Spring Boot
+
+Cloud initiation with : 
+ * [GitHub](https://www.github.com) for versioning
+ * [Clever-Cloud](https://www.clever-cloud.com/en/) for hosting
+ * [CircleCI](https://circleci.com/) for CI
 
 ## MongoDB
+
+The following paragraphs are for using *MongoDB* while running the server. No *MongoDB* installation is needed for running tests.
 
 ### Local use
 A local use of this application and MongoDB is possible without editing the application's configuration.
@@ -29,6 +37,7 @@ If you don't know how to do that, follow the next steps :
   ```
  2. Use this command to add the locally needed mongo user
  ```mongodb
+ use cloud
  db.createUser({user: "user",pwd: "pwd",roles: [{ role: "readWrite", db: "cloud" }]})
  ```
  3. Enjoy, the database used is *cloud* and the collection edited is named *users*
