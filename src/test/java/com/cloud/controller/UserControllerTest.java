@@ -4,16 +4,11 @@ import com.cloud.CloudApplicationTests;
 import com.cloud.models.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
-import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.*;
 import java.util.Comparator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
