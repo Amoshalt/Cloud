@@ -1,6 +1,8 @@
 package com.cloud.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mongodb.client.model.geojson.Point;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.GeneratedValue;
@@ -19,6 +21,7 @@ public class User {
 
     private String firstName;
     private String lastName;
+    @GeoSpatialIndexed
     private Position position;
     private Date birthDay;
     private static final SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");

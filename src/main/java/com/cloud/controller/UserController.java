@@ -5,6 +5,7 @@ import com.cloud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexCreator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
@@ -124,7 +125,7 @@ public class UserController {
 
     @GetMapping("/user/age")
     public ResponseEntity getUserFromAge(@RequestParam MultiValueMap<String, String> params) {
-        ResponseEntity response = null;
+        ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);
         if(params != null) {
             int age;
             int page = 0;
@@ -135,9 +136,7 @@ public class UserController {
             }
             if(params.containsKey("gt")) {
                 age = Integer.parseInt(params.get("gt").get(0));
-                if(age < 0) {
-                    response = new ResponseEntity(HttpStatus.BAD_REQUEST);
-                } else {
+                if(age >= 0) {
                     Calendar cal = Calendar.getInstance();
                     cal.add(Calendar.YEAR, -1 * age);
                     Date ago = cal.getTime();
@@ -146,13 +145,15 @@ public class UserController {
                 }
             } else if(params.containsKey("eq")) {
                 age = Integer.parseInt(params.get("eq").get(0));
-                Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.YEAR, -1*age);
-                Date oldest = cal.getTime();
-                cal.add(Calendar.YEAR, 1);
-                Date youngest = cal.getTime();
-                List<User> users = userRepository.findbyExactAge(oldest, youngest, PageRequest.of(page, 100));
-                response = new ResponseEntity<>(users, HttpStatus.OK);
+                if(age >= 0) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.add(Calendar.YEAR, -1 * age);
+                    Date oldest = cal.getTime();
+                    cal.add(Calendar.YEAR, 1);
+                    Date youngest = cal.getTime();
+                    List<User> users = userRepository.findbyExactAge(oldest, youngest, PageRequest.of(page, 100));
+                    response = new ResponseEntity<>(users, HttpStatus.OK);
+                }
             }
         }
         return response;
@@ -160,7 +161,7 @@ public class UserController {
 
     @GetMapping("/user/search")
     public ResponseEntity getUserFromText(@RequestParam MultiValueMap<String, String> params) {
-        ResponseEntity response = null;
+        ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);
         if(params != null) {
             int page = 0;
             if(params.containsKey("page")) {
@@ -173,9 +174,7 @@ public class UserController {
                 if (params.containsKey("name"))
                     name = params.get("name").get(0);
                 else name = params.get("term").get(0);
-                if (name.equals("")) {
-                    response = new ResponseEntity(HttpStatus.BAD_REQUEST);
-                } else {
+                if (!name.equals("")) {
                     List<User> users = userRepository.findByName(name, PageRequest.of(page, 100));
                     response = new ResponseEntity<>(users, HttpStatus.OK);
                 }
@@ -186,7 +185,7 @@ public class UserController {
 
     @GetMapping("/user/nearest")
     public ResponseEntity getUserFromPosition(@RequestParam MultiValueMap<String, String> params) {
-        ResponseEntity response = null;
+        ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);
         if(params != null) {
             int page = 0;
             if(params.containsKey("page")) {
@@ -198,8 +197,13 @@ public class UserController {
                 double lat, lon;
                 lat = Double.parseDouble(params.get("lat").get(0));
                 lon = Double.parseDouble(params.get("lon").get(0));
-                List<User> users = userRepository.findByLocationNear(lon, lat, PageRequest.of(page, 10));
-                response = new ResponseEntity<>(users, HttpStatus.OK);
+                if((lat >= -90)
+                        && (lat <= 90)
+                        && (lon >= -180)
+                        && (lon <= 180)) {
+                    List<User> users = userRepository.findByLocationNear(lat, lon, PageRequest.of(page, 10));
+                    response = new ResponseEntity<>(users, HttpStatus.OK);
+                }
             }
         }
         return response;
