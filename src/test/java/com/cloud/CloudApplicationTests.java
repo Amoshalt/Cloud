@@ -39,9 +39,9 @@ public class CloudApplicationTests{
     @Before
     public void setUp() {
 
-        user1= new User("Alice","Stop", new Position(0,0), "20/06/1996");
-        user2= new User("Bob","Crypto", new Position(1.0,2.1), "21/06/1996");
-        user3= new User("Carl","Immediately", new Position(1.23,3.56), "22/06/1996");
+        user1= new User("Alice","Stop", new Position(0,0), "06/20/1996");
+        user2= new User("Bob","Crypto", new Position(1.0,2.1), "06/21/1996");
+        user3= new User("Carl","Immediately", new Position(1.23,3.56), "06/22/1996");
         user4= new User("John","Doe", new Position(4.56,9.87), "12/12/1999");
 
         this.userRepository.save(user1);
