@@ -2,7 +2,9 @@ package com.cloud.repositories;
 import com.cloud.models.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,5 +15,16 @@ public interface UserRepository extends MongoRepository<User, String> {
      * @return user if it exists
      */
     Optional<User> findById(String id);
-    //List<User> find(Pageable pageable);
+
+    @Query(value = "{ 'birthDay' : {$lte : ?0 }}")
+    List<User> findOldest(Date origin, Pageable pageable);
+
+    @Query(value = "{ 'birthDay' : {$gt : ?0, $lt : ?1}}")
+    List<User> findbyExactAge(Date oldest, Date youngest, Pageable pageable);
+
+    @Query(value = "{ $or: [{'lastName' : ?0 }, {'firstName' : ?0 }]}")
+    List<User> findByName(String name, Pageable pageable);
+
+    @Query(value= "{ 'position' : {$near : [?1, ?0]} }")
+    List<User> findByLocationNear(double lat, double lon, Pageable pageable);
 }

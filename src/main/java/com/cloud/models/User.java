@@ -1,10 +1,17 @@
 package com.cloud.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mongodb.client.model.geojson.Point;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.sql.SQLOutput;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 
 @Document("users")
 public class User {
@@ -14,8 +21,19 @@ public class User {
 
     private String firstName;
     private String lastName;
+    @GeoSpatialIndexed
     private Position position;
-    private String birthDay;
+    private Date birthDay;
+    private static final SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+
+    private Date DateFromString(String str) {
+        try {
+            return format.parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
     /**
@@ -29,7 +47,7 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.position = position;
-        this.birthDay = birthDay;
+        this.birthDay = DateFromString(birthDay);
     }
 
     /**
@@ -40,7 +58,7 @@ public class User {
         this.firstName = "John";
         this.lastName = "Doe";
         this.position = new Position();
-        this.birthDay = "01/01/2000";
+        this.birthDay = DateFromString("01/01/2000");
     }
 
     @Override
@@ -122,7 +140,8 @@ public class User {
      * @return the day of birth
      */
     public String getBirthDay() {
-        return birthDay;
+        String str = format.format(birthDay);
+        return str;
     }
 
     /**
@@ -131,7 +150,7 @@ public class User {
      */
     @JsonProperty("birthDay")
     public void setBirthDay(String birthDay) {
-        this.birthDay = birthDay;
+        this.birthDay = DateFromString(birthDay);
     }
 
     /**
@@ -167,7 +186,7 @@ public class User {
                 .append("\",\"position\":")
                 .append(position)
                 .append(",\"birthDay\":\"")
-                .append(birthDay)
+                .append(getBirthDay())
                 .append("\"}");
         return builder.toString();
     }
