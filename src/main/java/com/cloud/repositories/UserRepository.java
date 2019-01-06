@@ -22,9 +22,9 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Query(value = "{ 'birthDay' : {$gt : ?0, $lt : ?1}}")
     List<User> findbyExactAge(Date oldest, Date youngest, Pageable pageable);
 
-    @Query(value = "{ 'lastName' : ?0 }")
+    @Query(value = "{ $or: [{'lastName' : ?0 }, {'firstName' : ?0 }]}")
     List<User> findByName(String name, Pageable pageable);
 
-    @Query(value= "{'geoNear' : 'position', 'near' : [?0, ?1] }")
-    List<User> findByLocationNear(double lon, double lat, Pageable pageable);
+    @Query(value= "{ 'position' : {$near : [?1, ?0]} }")
+    List<User> findByLocationNear(double lat, double lon, Pageable pageable);
 }

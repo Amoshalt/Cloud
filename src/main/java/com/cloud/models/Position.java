@@ -1,10 +1,12 @@
 package com.cloud.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 
 public class Position {
 
+    @GeoSpatialIndexed
     private double lat;
+    @GeoSpatialIndexed
     private double lon;
 
     /**
