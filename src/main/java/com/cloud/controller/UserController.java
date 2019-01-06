@@ -11,6 +11,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.Instant;
 import java.util.*;
 import javax.json.JsonObject;
 
@@ -116,9 +117,45 @@ public class UserController {
         Optional<User> user = this.userRepository.findById(id);
         if(user.isPresent()) {
             userRepository.delete(user.get());
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            return new ResponseEntity(null, HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/user/age")
+    public ResponseEntity getUserFromAge(@RequestParam MultiValueMap<String, String> params) {
+        ResponseEntity response = null;
+        if(params != null) {
+            int age;
+            int page = 0;
+            if(params.containsKey("page")) {
+                page = Integer.parseInt(params.get("page").get(0));
+                if(page < 0)
+                    page = 0;
+            }
+            if(params.containsKey("gt")) {
+                age = Integer.parseInt(params.get("gt").get(0));
+                if(age < 0) {
+                    response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+                } else {
+                    Calendar cal = Calendar.getInstance();
+                    cal.add(Calendar.YEAR, -1 * age);
+                    Date ago = cal.getTime();
+                    List<User> users = userRepository.findOldest(ago, PageRequest.of(page, 100));
+                    response = new ResponseEntity<>(users, HttpStatus.OK);
+                }
+            } else if(params.containsKey("eq")) {
+                age = Integer.parseInt(params.get("eq").get(0));
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.YEAR, -1*age);
+                Date oldest = cal.getTime();
+                cal.add(Calendar.YEAR, 1);
+                Date youngest = cal.getTime();
+                List<User> users = userRepository.findbyExactAge(oldest, youngest, PageRequest.of(page, 100));
+                response = new ResponseEntity<>(users, HttpStatus.OK);
+            }
+        }
+        return response;
     }
 }
