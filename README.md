@@ -24,7 +24,7 @@ The following paragraphs are for using *MongoDB* while running the server. No *M
 
 ### Local use
 A local use of this application and MongoDB is possible without editing the application's configuration if you don't need to authenticate yourself for using MongoDB.
-If you need to authenticate, create an environement variable called `MONGODB_ADDON_URI` containing you mongo connection URI (see [this page](http://www.mongoing.com/docs/reference/connection-string.html).
+If you need to authenticate, create an environement variable called `MONGODB_ADDON_URI` containing you mongo connection URI (see [this page](http://www.mongoing.com/docs/reference/connection-string.html)).
 Enjoy, the database used is *cloud* if you don't set your own URI and the collection edited is named *users*
 
 ## Clever-Cloud use
