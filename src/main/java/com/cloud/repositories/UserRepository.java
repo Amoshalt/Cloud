@@ -1,5 +1,7 @@
 package com.cloud.repositories;
 import com.cloud.models.User;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -14,7 +16,11 @@ public interface UserRepository extends MongoRepository<User, String> {
      * @param id of the user to find
      * @return user if it exists
      */
+    @Cacheable("users")
     Optional<User> findById(String id);
+
+    @Cacheable("userPage")
+    Page<User> findAll(Pageable pageable);
 
     @Query(value = "{ 'birthDay' : {$lte : ?0 }}")
     List<User> findOldest(Date origin, Pageable pageable);
