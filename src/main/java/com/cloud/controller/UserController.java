@@ -3,9 +3,9 @@ package com.cloud.controller;
 import com.cloud.models.User;
 import com.cloud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexCreator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
@@ -29,6 +29,7 @@ public class UserController {
      * @return List that contains all the users in the DB
      */
     @GetMapping("/user")
+    @Cacheable("userList")
     public List<User> getUsers(@RequestParam MultiValueMap<String, String> params) {
         List<User> users;
         int ipage = 0;
@@ -37,10 +38,10 @@ public class UserController {
             String arg = params.get("page").get(0);
             ipage = Integer.parseInt(arg);
         }
-        System.out.println("\nGet users from " + (ipage*100) + " to " + ((ipage*100) + 99));
+        
         Page<User> pusers = this.userRepository.findAll(PageRequest.of(ipage, 100));
         users = pusers.getContent();
-        System.out.println("Nb of users : " + users.size());
+        
         return users;
     }
 
@@ -50,9 +51,9 @@ public class UserController {
     @PutMapping("/user")
     @ResponseStatus(value = HttpStatus.CREATED)
     public List<User> putUsers(@Valid @RequestBody List<User> users) {
-        System.out.println("\nClear DB");
+        
         this.userRepository.deleteAll();
-        System.out.println("Put " + users.size() + " users in DB");
+        
         this.userRepository.saveAll(users);
         return getUsers(null);
     }
@@ -62,7 +63,7 @@ public class UserController {
      */
     @DeleteMapping("/user")
     public void deleteUsers() {
-        System.out.println("\nClear DB");
+        
         this.userRepository.deleteAll();
     }
 
@@ -73,12 +74,13 @@ public class UserController {
      */
     @GetMapping("/user/{id}")
     public ResponseEntity<User> getUser(@PathVariable(value = "id") String id) {
-        System.out.println("\nGet user " + id);
+        
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()) {
-            userRepository.delete(user.get());
+            
             return new ResponseEntity<>(user.get(), HttpStatus.OK);
         } else {
+            
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -91,7 +93,7 @@ public class UserController {
     @PostMapping("/user")
     @ResponseStatus(value = HttpStatus.CREATED)
     public @Valid User postUser(@Valid @RequestBody User user) {
-        System.out.println("\nPost user");
+        
         return this.userRepository.insert(user);
     }
 
@@ -102,7 +104,7 @@ public class UserController {
      */
     @PutMapping("/user/{id}")
     public JsonObject putUser(@PathVariable(value = "id") String id, @RequestBody User user) {
-        System.out.println("\nPut user " + id);
+        
         userRepository.save(user);
         return null;
     }
@@ -113,12 +115,14 @@ public class UserController {
      */
     @DeleteMapping("/user/{id}")
     public ResponseEntity deleteUser(@PathVariable(value = "id") String id) {
-        System.out.println("\nDelete user " + id);
+        
         Optional<User> user = this.userRepository.findById(id);
         if(user.isPresent()) {
             userRepository.delete(user.get());
+            
             return new ResponseEntity(null, HttpStatus.NO_CONTENT);
         } else {
+            
             return new ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -126,6 +130,7 @@ public class UserController {
     @GetMapping("/user/age")
     public ResponseEntity getUserFromAge(@RequestParam MultiValueMap<String, String> params) {
         ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+        
         if(params != null) {
             int age;
             int page = 0;
@@ -162,6 +167,7 @@ public class UserController {
     @GetMapping("/user/search")
     public ResponseEntity getUserFromText(@RequestParam MultiValueMap<String, String> params) {
         ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+        
         if(params != null) {
             int page = 0;
             if(params.containsKey("page")) {
@@ -186,6 +192,7 @@ public class UserController {
     @GetMapping("/user/nearest")
     public ResponseEntity getUserFromPosition(@RequestParam MultiValueMap<String, String> params) {
         ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+        
         if(params != null) {
             int page = 0;
             if(params.containsKey("page")) {
