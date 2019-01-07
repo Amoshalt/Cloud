@@ -52,9 +52,9 @@ public class UserController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public List<User> putUsers(@Valid @RequestBody List<User> users) {
         
-        this.userRepository.deleteAll();
+        userRepository.deleteAll();
         
-        this.userRepository.saveAll(users);
+        userRepository.saveAll(users);
         return getUsersPage(null);
     }
 
@@ -64,7 +64,7 @@ public class UserController {
     @DeleteMapping("/user")
     public void deleteUsers() {
         
-        this.userRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
 
@@ -88,7 +88,7 @@ public class UserController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public @Valid User postUser(@Valid @RequestBody User user) {
         
-        return this.userRepository.insert(user);
+        return userRepository.save(user);
     }
 
     /** update user by id
