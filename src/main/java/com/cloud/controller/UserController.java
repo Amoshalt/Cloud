@@ -38,10 +38,10 @@ public class UserController {
             String arg = params.get("page").get(0);
             ipage = Integer.parseInt(arg);
         }
-        System.out.println("GET /user");
+        
         Page<User> pusers = this.userRepository.findAll(PageRequest.of(ipage, 100));
         users = pusers.getContent();
-        System.out.println(" > Users from " + (ipage*100) + " (" + users.size() + " entities)");
+        
         return users;
     }
 
@@ -51,9 +51,9 @@ public class UserController {
     @PutMapping("/user")
     @ResponseStatus(value = HttpStatus.CREATED)
     public List<User> putUsers(@Valid @RequestBody List<User> users) {
-        System.out.println("PUT /user");
+        
         this.userRepository.deleteAll();
-        System.out.println(" > Put " + users.size() + " users");
+        
         this.userRepository.saveAll(users);
         return getUsers(null);
     }
@@ -63,7 +63,7 @@ public class UserController {
      */
     @DeleteMapping("/user")
     public void deleteUsers() {
-        System.out.println("DELETE /user");
+        
         this.userRepository.deleteAll();
     }
 
@@ -74,13 +74,13 @@ public class UserController {
      */
     @GetMapping("/user/{id}")
     public ResponseEntity<User> getUser(@PathVariable(value = "id") String id) {
-        System.out.println("GET /user/" + id);
+        
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()) {
-            System.out.println(" > User found");
+            
             return new ResponseEntity<>(user.get(), HttpStatus.OK);
         } else {
-            System.out.println(" > No user");
+            
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -93,7 +93,7 @@ public class UserController {
     @PostMapping("/user")
     @ResponseStatus(value = HttpStatus.CREATED)
     public @Valid User postUser(@Valid @RequestBody User user) {
-        System.out.println("POST /user");
+        
         return this.userRepository.insert(user);
     }
 
@@ -104,7 +104,7 @@ public class UserController {
      */
     @PutMapping("/user/{id}")
     public JsonObject putUser(@PathVariable(value = "id") String id, @RequestBody User user) {
-        System.out.println("PUT /user/" + id);
+        
         userRepository.save(user);
         return null;
     }
@@ -115,14 +115,14 @@ public class UserController {
      */
     @DeleteMapping("/user/{id}")
     public ResponseEntity deleteUser(@PathVariable(value = "id") String id) {
-        System.out.println("DELETE /user/" + id);
+        
         Optional<User> user = this.userRepository.findById(id);
         if(user.isPresent()) {
             userRepository.delete(user.get());
-            System.out.println(" > User deleted");
+            
             return new ResponseEntity(null, HttpStatus.NO_CONTENT);
         } else {
-            System.out.println(" > No user to delete");
+            
             return new ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -130,7 +130,7 @@ public class UserController {
     @GetMapping("/user/age")
     public ResponseEntity getUserFromAge(@RequestParam MultiValueMap<String, String> params) {
         ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);
-        System.out.println("GET /user/age");
+        
         if(params != null) {
             int age;
             int page = 0;
@@ -167,7 +167,7 @@ public class UserController {
     @GetMapping("/user/search")
     public ResponseEntity getUserFromText(@RequestParam MultiValueMap<String, String> params) {
         ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);
-        System.out.println("GET /user/search");
+        
         if(params != null) {
             int page = 0;
             if(params.containsKey("page")) {
@@ -192,7 +192,7 @@ public class UserController {
     @GetMapping("/user/nearest")
     public ResponseEntity getUserFromPosition(@RequestParam MultiValueMap<String, String> params) {
         ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);
-        System.out.println("GET /user/search");
+        
         if(params != null) {
             int page = 0;
             if(params.containsKey("page")) {
