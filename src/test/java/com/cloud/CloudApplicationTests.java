@@ -48,12 +48,6 @@ public class CloudApplicationTests{
         this.userRepository.save(user2);
     }
 
-    @Test
-    public void noErrorHere() {
-        //Always true
-        //Allow CircleCI to test this class without error
-    }
-
     @After
     public void end() {
         userRepository.deleteAll();

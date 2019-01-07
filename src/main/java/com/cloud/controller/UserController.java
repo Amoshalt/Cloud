@@ -3,6 +3,8 @@ package com.cloud.controller;
 import com.cloud.models.User;
 import com.cloud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -28,23 +30,25 @@ public class UserController {
     /** get all users
      * @return List that contains all the users in the DB
      */
-    @GetMapping("/user")
-    public List<User> getUsersPage(@RequestParam Map<String, String> params) {
-        Pageable page = null;
-        if(params != null && params.containsKey("page")) {
-            page = PageRequest.of(
-                    Integer.parseInt(params.get("page")),
+    @GetMapping("/user?page={page}")
+    @Cacheable(value = "list", key = "page")
+    public List<User> getUsersPage(@PathVariable String page) {
+        Pageable pageable = null;
+        if(page != null) {
+            pageable = PageRequest.of(
+                    Integer.parseInt(page),
                     100
             );
         }
-        return userRepository.findAll(page != null ? page : defaultPage).getContent();
+        return userRepository.findAll(pageable != null ? pageable : defaultPage).getContent();
     }
-/*
+
     @GetMapping("/user")
+    @Cacheable(value = "list", key = "0")
     public List<User> getUsers() {
         return userRepository.findAll(defaultPage).getContent();
     }
-*/
+
     /** replace users by users
      * @return List that contains all the users in the DB
      */

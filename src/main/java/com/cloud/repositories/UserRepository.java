@@ -20,19 +20,19 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findById(String id);
 
     @Override
-    @CacheEvict(value="page",allEntries=true)
+    @CacheEvict(value="page", allEntries=true)
     <S extends User> S save(S s);
 
     @Override
-    @CacheEvict(value="page",allEntries=true)
+    @CacheEvict(value="page", allEntries=true)
     <S extends User> List<S> saveAll(Iterable<S> iterable);
 
     @Override
-    @CacheEvict(value="page",allEntries=true)
+    @CacheEvict(value="page", allEntries=true)
     void delete(User user);
 
     @Override
-    @CacheEvict(value="page",allEntries=true)
+    @CacheEvict(value="page", allEntries=true)
     void deleteAll(Iterable<? extends User> iterable);
 
     @Cacheable (value = "page", key = "#pageable")
