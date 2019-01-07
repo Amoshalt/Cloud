@@ -3,9 +3,8 @@ package com.cloud.controller;
 import com.cloud.models.User;
 import com.cloud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
@@ -24,27 +23,28 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    private static final Pageable defaultPage = PageRequest.of(0, 100).first();
 
     /** get all users
      * @return List that contains all the users in the DB
      */
     @GetMapping("/user")
-    @Cacheable("userList")
-    public List<User> getUsers(@RequestParam MultiValueMap<String, String> params) {
-        List<User> users;
-        int ipage = 0;
+    public List<User> getUsersPage(@RequestParam Map<String, String> params) {
+        Pageable page = null;
         if(params != null && params.containsKey("page")) {
-
-            String arg = params.get("page").get(0);
-            ipage = Integer.parseInt(arg);
+            page = PageRequest.of(
+                    Integer.parseInt(params.get("page")),
+                    100
+            );
         }
-        
-        Page<User> pusers = this.userRepository.findAll(PageRequest.of(ipage, 100));
-        users = pusers.getContent();
-        
-        return users;
+        return userRepository.findAll(page != null ? page : defaultPage).getContent();
     }
-
+/*
+    @GetMapping("/user")
+    public List<User> getUsers() {
+        return userRepository.findAll(defaultPage).getContent();
+    }
+*/
     /** replace users by users
      * @return List that contains all the users in the DB
      */
@@ -55,7 +55,7 @@ public class UserController {
         this.userRepository.deleteAll();
         
         this.userRepository.saveAll(users);
-        return getUsers(null);
+        return getUsersPage(null);
     }
 
     /** delete all users
@@ -76,13 +76,7 @@ public class UserController {
     public ResponseEntity<User> getUser(@PathVariable(value = "id") String id) {
         
         Optional<User> user = userRepository.findById(id);
-        if(user.isPresent()) {
-            
-            return new ResponseEntity<>(user.get(), HttpStatus.OK);
-        } else {
-            
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return user.map(user1 -> new ResponseEntity<>(user1, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
 
@@ -104,8 +98,11 @@ public class UserController {
      */
     @PutMapping("/user/{id}")
     public JsonObject putUser(@PathVariable(value = "id") String id, @RequestBody User user) {
-        
-        userRepository.save(user);
+        Optional<User> u = userRepository.findById(id);
+        if(u.isPresent()) {
+            user.setId(id);
+            userRepository.save(user);
+        }
         return null;
     }
 
@@ -133,11 +130,12 @@ public class UserController {
         
         if(params != null) {
             int age;
-            int page = 0;
+            Pageable page = defaultPage;
             if(params.containsKey("page")) {
-                page = Integer.parseInt(params.get("page").get(0));
-                if(page < 0)
-                    page = 0;
+                int ipage = Integer.parseInt(params.get("page").get(0));
+                if(ipage > 0)
+                    page = PageRequest.of(ipage, 100);
+
             }
             if(params.containsKey("gt")) {
                 age = Integer.parseInt(params.get("gt").get(0));
@@ -145,7 +143,7 @@ public class UserController {
                     Calendar cal = Calendar.getInstance();
                     cal.add(Calendar.YEAR, -1 * age);
                     Date ago = cal.getTime();
-                    List<User> users = userRepository.findOldest(ago, PageRequest.of(page, 100));
+                    List<User> users = userRepository.findOldest(ago, page);
                     response = new ResponseEntity<>(users, HttpStatus.OK);
                 }
             } else if(params.containsKey("eq")) {
@@ -156,7 +154,7 @@ public class UserController {
                     Date oldest = cal.getTime();
                     cal.add(Calendar.YEAR, 1);
                     Date youngest = cal.getTime();
-                    List<User> users = userRepository.findbyExactAge(oldest, youngest, PageRequest.of(page, 100));
+                    List<User> users = userRepository.findbyExactAge(oldest, youngest, page);
                     response = new ResponseEntity<>(users, HttpStatus.OK);
                 }
             }
@@ -169,11 +167,11 @@ public class UserController {
         ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);
         
         if(params != null) {
-            int page = 0;
+            Pageable page = defaultPage;
             if(params.containsKey("page")) {
-                page = Integer.parseInt(params.get("page").get(0));
-                if(page < 0)
-                    page = 0;
+                int ipage = Integer.parseInt(params.get("page").get(0));
+                if(ipage > 0)
+                    page = PageRequest.of(ipage, 100);
             }
             if(params.containsKey("name") || params.containsKey("term")) {
                 String name;
@@ -181,7 +179,7 @@ public class UserController {
                     name = params.get("name").get(0);
                 else name = params.get("term").get(0);
                 if (!name.equals("")) {
-                    List<User> users = userRepository.findByName(name, PageRequest.of(page, 100));
+                    List<User> users = userRepository.findByName(name, page);
                     response = new ResponseEntity<>(users, HttpStatus.OK);
                 }
             }
@@ -194,11 +192,11 @@ public class UserController {
         ResponseEntity response = new ResponseEntity(HttpStatus.BAD_REQUEST);
         
         if(params != null) {
-            int page = 0;
+            Pageable page = PageRequest.of(0, 10);
             if(params.containsKey("page")) {
-                page = Integer.parseInt(params.get("page").get(0));
-                if(page < 0)
-                    page = 0;
+                int ipage = Integer.parseInt(params.get("page").get(0));
+                if(ipage > 0)
+                    page = PageRequest.of(ipage, 10);
             }
             if(params.containsKey("lat") && params.containsKey("lon")) {
                 double lat, lon;
@@ -208,7 +206,7 @@ public class UserController {
                         && (lat <= 90)
                         && (lon >= -180)
                         && (lon <= 180)) {
-                    List<User> users = userRepository.findByLocationNear(lat, lon, PageRequest.of(page, 10));
+                    List<User> users = userRepository.findByLocationNear(lat, lon, page);
                     response = new ResponseEntity<>(users, HttpStatus.OK);
                 }
             }
