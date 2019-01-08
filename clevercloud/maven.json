@@ -1,8 +1,4 @@
 {
-  "build": {
-    "type": "maven",
-    "goal": "package -DskipTests=true"
-  },
   "deploy": {
     "goal": "spring-boot:run -DskipTests=true"
   }
