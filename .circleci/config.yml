@@ -78,7 +78,7 @@ workflows:
 
       - deploy:
         requires:
-          -build
+          - build
         filters:
           branches:
             only: build-deploy-Clever-Circle
