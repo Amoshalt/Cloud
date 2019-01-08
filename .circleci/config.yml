@@ -69,6 +69,7 @@ jobs: # a collection of steps
         command: |
           git remote add clever https://$2317e2cc455c4f4aa98777e37f406dda:$513042a039c84da4a031098ca44cf68f@push-par-clevercloud-customers.services.clever-cloud.com/$app_52362fb2-35d5-47ed-8897-815a03f8024a.git
           git push -u clever master
+
 workflows:
   version: 2
   build_and_deploy:
@@ -78,7 +79,7 @@ workflows:
 
       - deploy:
         requires:
-          - build
+           - build
         filters:
           branches:
-            only: build-deploy-Clever-Circle
+            only: build-deploy_Clever-Circle
