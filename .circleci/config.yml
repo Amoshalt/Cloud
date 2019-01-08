@@ -53,3 +53,30 @@ jobs: # a collection of steps
       - store_artifacts: # store the uberjar as an artifact
           path: target/cloud-1.0.jar
       # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
+  deploy:
+    docker:
+      - image: circleci/openjdk
+
+      working_directory: ~/~
+
+      steps:
+        - checkout
+
+        -run:
+          name: clever deploy
+          command: |
+            git remote add clever https://$2317e2cc455c4f4aa98777e37f406dda:$513042a039c84da4a031098ca44cf68f@push-par-clevercloud-customers.services.clever-cloud.com/$app_52362fb2-35d5-47ed-8897-815a03f8024a.git
+            git push -u clever master
+workflows:
+  version: 2
+  build_and_deploy:
+
+    jobs:
+      - build
+
+      - deploy:
+        requires:
+          -build
+        filters:
+          branches:
+            only: build-deploy-Clever-Circle
