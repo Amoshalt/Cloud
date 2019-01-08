@@ -61,6 +61,7 @@ jobs: # a collection of steps
       - image: circleci/openjdk
 
     steps:
+
       - checkout
 
       -run:
