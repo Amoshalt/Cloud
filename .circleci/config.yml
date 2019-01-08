@@ -54,13 +54,13 @@ jobs: # a collection of steps
           path: target/cloud-1.0.jar
       # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
   deploy:
+
+    working_directory: ~/~
+
     docker:
-
-      working_directory: ~/~
-
       - image: circleci/openjdk
 
-      steps:
+    steps:
         - checkout
 
         -run:
