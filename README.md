@@ -32,3 +32,13 @@ Manipulation to do on first use only.
  * Go on your machine view
  * In '*Services Liés*' panel add your *MongoDB* addon
  * Application detects all parameters from the addon's published configuration by itself.
+
+## Relaunch process
+  * Create new machine
+  * Select 'From local repo'
+  * Select 'Java - Maven' machine
+  * Say OK to all
+  * In same time (to be more efficient)
+    * Set tokens in *CircleCI*
+    * Bind *MongoDB* addon to machine in *Clever Cloud*
+  * Make a commit on master
