@@ -109,6 +109,7 @@ public class UserControllerTest extends CloudApplicationTests {
         if(num >= 0) {
             url += "?page=" + num;
         }
+        System.out.println(url);
         List<User> users = getUserList(url);
         users.sort(Comparator.comparing(User::getId));
         return users;

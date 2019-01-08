@@ -2,6 +2,7 @@ package com.cloud.repositories;
 import com.cloud.models.User;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -20,22 +21,36 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findById(String id);
 
     @Override
-    @CacheEvict(value="page", allEntries=true)
+    @Caching(evict = {
+            @CacheEvict(value="list", allEntries=true),
+            @CacheEvict(value="page", allEntries=true) })
     <S extends User> S save(S s);
 
     @Override
-    @CacheEvict(value="page", allEntries=true)
+    @Caching(evict = {
+            @CacheEvict(value="list", allEntries=true),
+            @CacheEvict(value="page", allEntries=true) })
     <S extends User> List<S> saveAll(Iterable<S> iterable);
 
     @Override
-    @CacheEvict(value="page", allEntries=true)
+    @Caching(evict = {
+            @CacheEvict(value="list", allEntries=true),
+            @CacheEvict(value="page", allEntries=true) })
     void delete(User user);
 
     @Override
-    @CacheEvict(value="page", allEntries=true)
+    @Caching(evict = {
+            @CacheEvict(value="list", allEntries=true),
+            @CacheEvict(value="page", allEntries=true) })
     void deleteAll(Iterable<? extends User> iterable);
 
-    @Cacheable (value = "page", key = "#pageable")
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value="list", allEntries=true),
+            @CacheEvict(value="page", allEntries=true) })
+    void deleteAll();
+
+    //@Cacheable (value = "page", key = "#pageable")
     Page<User> findAll(Pageable pageable);
 
     @Query(value = "{ 'birthDay' : {$lte : ?0 }}")

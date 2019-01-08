@@ -18,6 +18,8 @@ import javax.json.JsonObject;
 
 import java.util.List;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 @RestController
 @RequestMapping("/")
 public class UserController {
@@ -30,11 +32,13 @@ public class UserController {
     /** get all users
      * @return List that contains all the users in the DB
      */
-    @GetMapping("/user?page={page}")
-    @Cacheable(value = "list", key = "page")
-    public List<User> getUsersPage(@PathVariable String page) {
+    @GetMapping("/user")
+    @Cacheable("list")
+    public List<User> getUsersPage(@RequestParam MultiValueMap<String, String> params) {
         Pageable pageable = null;
-        if(page != null) {
+        if(params != null && params.containsKey("page")) {
+            String page = String.valueOf(params.get("page"));
+            page = page.substring(1, page.length()-1);
             pageable = PageRequest.of(
                     Integer.parseInt(page),
                     100
@@ -42,13 +46,14 @@ public class UserController {
         }
         return userRepository.findAll(pageable != null ? pageable : defaultPage).getContent();
     }
-
-    @GetMapping("/user")
-    @Cacheable(value = "list", key = "0")
+/*
+    //@GetMapping("/user")
+    @RequestMapping(value = "/user", method = GET)
+    @Cacheable("page")
     public List<User> getUsers() {
-        return userRepository.findAll(defaultPage).getContent();
+        return userRepository.findAll(PageRequest.of(0, 100)).getContent();
     }
-
+*/
     /** replace users by users
      * @return List that contains all the users in the DB
      */
