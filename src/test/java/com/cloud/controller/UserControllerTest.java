@@ -106,7 +106,7 @@ public abstract class UserControllerTest extends CloudApplicationTests {
      * @throws Exception if error happen
      */
     List<User> getPage(int num) throws Exception {
-        String url = "/user";
+        String url = "/users";
         if(num >= 0) {
             url += "?page=" + num;
         }

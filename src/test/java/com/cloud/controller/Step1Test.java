@@ -51,7 +51,7 @@ public class Step1Test extends UserControllerTest {
      */
     @Test
     public void getUsers() throws Exception {
-        mockMvc.perform(get("/user"))
+        mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string(String.valueOf("[" + user1 + "," + user2 + "," + user3 + "," + user4 + "]")));
     }
@@ -91,19 +91,19 @@ public class Step1Test extends UserControllerTest {
                 .andExpect(status().isOk());
 
         Assert.assertEquals(String.valueOf(""),
-                mockMvc.perform(get("/user/" + user1.getId()))
+                mockMvc.perform(get("/user" + user1.getId()))
                         .andDo(print())
                         .andReturn()
                         .getResponse()
                         .getContentAsString());
         Assert.assertEquals(String.valueOf(""),
-                mockMvc.perform(get("/user/" + user1.getId()))
+                mockMvc.perform(get("/user" + user1.getId()))
                         .andDo(print())
                         .andReturn()
                         .getResponse()
                         .getContentAsString());
         Assert.assertEquals("[]",
-                mockMvc.perform(get("/user"))
+                mockMvc.perform(get("/users"))
                         .andDo(print())
                         .andReturn()
                         .getResponse()

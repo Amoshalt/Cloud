@@ -32,7 +32,7 @@ public class UserController {
     /** get all users
      * @return List that contains all the users in the DB
      */
-    @GetMapping("/user")
+    @GetMapping("/users")
     @Cacheable("list")
     public List<User> getUsersPage(@RequestParam MultiValueMap<String, String> params) {
         Pageable pageable = null;
