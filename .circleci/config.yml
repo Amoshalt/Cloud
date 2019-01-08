@@ -78,8 +78,8 @@ workflows:
       - build
 
       - deploy:
-        requires:
+          requires:
            - build
-        filters:
-          branches:
-            only: build-deploy_Clever-Circle
+          filters:
+            branches:
+              only: build-deploy_Clever-Circle
