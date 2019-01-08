@@ -67,7 +67,8 @@ jobs: # a collection of steps
       - run:
           name: clever deploy
           command: |
-            git remote add clever https://$CLEVER_TOKEN:$CLEVER_SECRET@push-par-clevercloud-customers.services.clever-cloud.com/$CLEVER_APP_ID.git && git push -u clever master
+            git remote add clever https://$CLEVER_TOKEN:$CLEVER_SECRET@push-par-clevercloud-customers.services.clever-cloud.com/$CLEVER_APP_ID.git
+            git push --verbose clever master 2>&1 | grep -e 'remote:' -e '->'
 
 workflows:
   version: 2
