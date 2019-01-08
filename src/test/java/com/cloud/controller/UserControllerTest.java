@@ -4,6 +4,7 @@ import com.cloud.CloudApplicationTests;
 import com.cloud.models.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.*;
@@ -14,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class UserControllerTest extends CloudApplicationTests {
+public abstract class UserControllerTest extends CloudApplicationTests {
 
     /**
      * Get the regex to identify a user. Works better than a classical string if the id is null

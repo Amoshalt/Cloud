@@ -23,7 +23,7 @@ import java.util.Arrays;
 @WebAppConfiguration
 @AutoConfigureMockMvc
 @SpringBootTest
-public class CloudApplicationTests{
+public abstract class CloudApplicationTests{
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired

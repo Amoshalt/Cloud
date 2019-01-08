@@ -76,10 +76,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.0</version>
 				<configuration>
-					<excludes>
-						<exclude>**/UserControllerTest.java</exclude>
-						<exclude>**/CloudApplicationTests.java</exclude>
-					</excludes>
 					<skipTests>${skipTests}</skipTests>
 					<testFailureIgnore>false</testFailureIgnore>
 				</configuration>
