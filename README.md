@@ -41,4 +41,5 @@ Manipulation to do on first use only.
   * In same time (to be more efficient)
     * Set tokens in [*CircleCI*](https://circleci.com/gh/Amoshalt/Cloud/edit#env-vars)
     * Bind *MongoDB* addon to machine in *Clever Cloud*
-  * Make a commit on master
+    * Set domain name to 'tom4.cleverapps.io' in *Clever Cloud*
+  * Make a commit on master and push to run tests and push on machine
