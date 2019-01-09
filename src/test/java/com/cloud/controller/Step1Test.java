@@ -5,7 +5,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
@@ -13,8 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,7 +28,6 @@ public class Step1Test extends UserControllerTest {
             users.append(this.getUserJSON(u)).append(",");
         }
         users.replace(users.length()-1, users.length(), "]");
-        System.out.println(users.toString());
         mockMvc.perform(put("/user")
                 .contentType("application/json")
                 .content(users.toString()))

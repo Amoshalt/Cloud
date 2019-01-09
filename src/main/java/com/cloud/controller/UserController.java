@@ -4,7 +4,6 @@ import com.cloud.models.User;
 import com.cloud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -12,13 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.*;
 import javax.json.JsonObject;
-
+import javax.validation.Valid;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/")
@@ -46,21 +44,13 @@ public class UserController {
         }
         return userRepository.findAll(pageable != null ? pageable : defaultPage).getContent();
     }
-/*
-    //@GetMapping("/user")
-    @RequestMapping(value = "/user", method = GET)
-    @Cacheable("page")
-    public List<User> getUsers() {
-        return userRepository.findAll(PageRequest.of(0, 100)).getContent();
-    }
-*/
+
     /** replace users by users
      * @return List that contains all the users in the DB
      */
     @PutMapping("/user")
     @ResponseStatus(value = HttpStatus.CREATED)
     public List<User> putUsers(@Valid @RequestBody List<User> users) {
-        
         userRepository.deleteAll();
         
         userRepository.saveAll(users);
@@ -72,7 +62,6 @@ public class UserController {
      */
     @DeleteMapping("/user")
     public void deleteUsers() {
-        
         userRepository.deleteAll();
     }
 
@@ -83,7 +72,6 @@ public class UserController {
      */
     @GetMapping("/user/{id}")
     public ResponseEntity<User> getUser(@PathVariable(value = "id") String id) {
-        
         Optional<User> user = userRepository.findById(id);
         return user.map(user1 -> new ResponseEntity<>(user1, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -96,7 +84,6 @@ public class UserController {
     @PostMapping("/user")
     @ResponseStatus(value = HttpStatus.CREATED)
     public @Valid User postUser(@Valid @RequestBody User user) {
-        
         return userRepository.save(user);
     }
 
@@ -121,7 +108,6 @@ public class UserController {
      */
     @DeleteMapping("/user/{id}")
     public ResponseEntity deleteUser(@PathVariable(value = "id") String id) {
-        
         Optional<User> user = this.userRepository.findById(id);
         if(user.isPresent()) {
             userRepository.delete(user.get());
