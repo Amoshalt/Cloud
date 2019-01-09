@@ -87,13 +87,13 @@ public class Step1Test extends UserControllerTest {
                 .andExpect(status().isOk());
 
         Assert.assertEquals(String.valueOf(""),
-                mockMvc.perform(get("/user/" + user1.getId()))
+                mockMvc.perform(get("/user" + user1.getId()))
                         .andDo(print())
                         .andReturn()
                         .getResponse()
                         .getContentAsString());
         Assert.assertEquals(String.valueOf(""),
-                mockMvc.perform(get("/user/" + user1.getId()))
+                mockMvc.perform(get("/user" + user1.getId()))
                         .andDo(print())
                         .andReturn()
                         .getResponse()

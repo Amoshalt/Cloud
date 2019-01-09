@@ -1,7 +1,6 @@
 version: 2
 jobs:
   build:
-    
     working_directory: ~/~ # directory where steps will run
 
     docker: # run the steps with Docker
@@ -13,18 +12,47 @@ jobs:
 
       - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
           key: -{{ checksum "pom.xml" }}
-      
+
       - run: mvn dependency:go-offline # gets the project dependencies
-      
+
       - save_cache: # saves the project dependencies
           paths:
             - ~/.m2
           key: -{{ checksum "pom.xml" }}
-      
+
       - run: mvn package # run the actual tests
-      
-      - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard. 
+
+      - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
           path: target/
-      
+
       - store_artifacts: # store the uberjar as an artifact
           path: target/cloud-1.0.jar
+  deploy:
+
+    working_directory: ~/~
+
+    docker:
+      - image: circleci/openjdk
+
+    steps:
+
+      - checkout
+
+      - run:
+          name: clever deploy
+          command: |
+            git remote add clever https://$CLEVER_TOKEN:$CLEVER_SECRET@push-par-clevercloud-customers.services.clever-cloud.com/$CLEVER_APP_ID.git
+            git push --verbose clever master 2>&1 | grep -e 'remote:' -e '->'
+workflows:
+  version: 2
+  build_and_deploy:
+
+    jobs:
+      - build
+
+      - deploy:
+          requires:
+           - build
+          filters:
+            branches:
+              only: master
