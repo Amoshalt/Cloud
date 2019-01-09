@@ -39,6 +39,6 @@ Manipulation to do on first use only.
   * Select 'Java - Maven' machine
   * Say OK to all
   * In same time (to be more efficient)
-    * Set tokens in *CircleCI*
+    * Set tokens in [*CircleCI*](https://circleci.com/gh/Amoshalt/Cloud/edit#env-vars)
     * Bind *MongoDB* addon to machine in *Clever Cloud*
   * Make a commit on master
