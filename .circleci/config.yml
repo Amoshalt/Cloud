@@ -1,30 +1,6 @@
-# version: 2.1
-
-# orbs:
-#     hello: circleci/hello-build@0.0.7 # uses the circleci/buildpack-deps Docker image
-
-# workflows:
-#     "Hello Workflow":
-#         jobs:
-#           - hello/hello-build
-
-# jobs:
-#   build:
-#     docker: # use the docker executor type; machine and macos executors are also supported
-#       - image: circleci/openjdk:8-jdk-browsers # ...with this image as the primary container; this is where all `steps` will run
-#     steps:
-#       - checkout # check out the code in the project directory
-#       - run: mvn package
-
-
-
-
-
-
-
-version: 2 # use CircleCI 2.0
-jobs: # a collection of steps
-  build: # runs not using Workflows must have a `build` job as entry point
+version: 2
+jobs:
+  build:
     
     working_directory: ~/~ # directory where steps will run
 
@@ -52,4 +28,3 @@ jobs: # a collection of steps
       
       - store_artifacts: # store the uberjar as an artifact
           path: target/cloud-1.0.jar
-      # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
