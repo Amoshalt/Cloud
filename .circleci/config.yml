@@ -28,7 +28,6 @@ jobs: # a collection of steps
 
       - store_artifacts: # store the uberjar as an artifact
           path: target/cloud-1.0.jar
-      # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
   deploy:
 
     working_directory: ~/~
